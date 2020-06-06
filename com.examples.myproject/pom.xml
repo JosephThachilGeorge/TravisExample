@@ -67,7 +67,7 @@
       <build>
         <plugins>
           <plugin>
-            <!-- configured in pluginManagement -->
+            <!-- configured in pluginManagement  -->
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
           </plugin>
