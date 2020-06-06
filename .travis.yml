@@ -1,0 +1,38 @@
+language: java
+
+matrix:
+   include:
+      # always build this environment
+      - os: linux
+        dist: xenial
+        jdk: openjdk11
+        env: ADDITIONAL_MAVEN_ARGS="-Pjacoco coveralls:report"
+      # only on PR
+      - os: linux
+        dist: xenial
+        jdk: openjdk8
+        if: type IN (pull_request)
+      # only on PR or after merging a PR
+      - os: osx
+        osx_image: xcode10.1
+        if: type IN (pull_request) OR commit_message =~ /^Merge pull request/
+        
+        service_name: travis-pro 
+        repo_token: WVxOgW89YRQEMimtxrm0MgbI6U2CweyXl
+        
+      addons:
+  sonarcloud:
+    organization: "josephthachilgeorge"  
+        secure: "amcFWx7PplPTPNEzC5BLxES86bGTLZdohLZoEOv6Azg4TnE1WHFX9KtAxjflk8afc0D1j06UII3N5T/w82xteNoOSNQhY6PxC9Lnk0Dpa15xR511DQNGzrXDlLRF8dVrb8QyLMHtajhyUhv2ik4HOFuCxZd/iP/HBF4Dz27eO/I+ZG6EionL95mz0W2V+AlBffG3WKqnSccIVGIW+d6S3My1F6l9DLY9dVoUnEBD3uyR0rY3Rz4E4yx0EDs1mKNaQ7/6Fuz2StCInKfmLK5Bhk0Bj3uXTcAjJQPwvxxUBOv5VVxHlqes93ixFOq4EbzNGInjOP1Ea4X99v2CMLjejS1M3BKxTUUTVYMt0Mp7CpXH7hr7WPVGkN/tFAnNWvr1hMYTPuRkEmoDWHmF68tgM9CbJ0Y/B5b5M2oaHpHqVmVu2J5moczzAEYjt+GV3R3F1uHz3ijq0nDEHKwWmh0iMHerwbzj+HAtWyUqyZ322e1vuhzs6gQrr6/R07FORp5KkgpOia/wYQEnefvNkxeCD9qR6Ux7cSoUy2Qt75d4oKKCap0BuSBVcC2Vvxmd/kaBCSPUo3y1kfvVyM9p9I2IWtx7eIpXT3CBtbEg4vovAnqBGYRDmknv2PwdhwinyY8DjrzNsbER/atI9yvaklUZE24JpAxVOcyJlvjVk4rAJ3A="
+
+# skip installation step
+install: true
+
+cache:
+   directories:
+      - $HOME/.m2
+
+script:
+   - mvn -f com.examples.myproject/pom.xml clean verify $ADDITIONAL_MAVEN_ARGS
+   - mvn -f com.examples.myproject/pom.xml clean org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar
+   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=JosephThachilGeorge_TravisExample
